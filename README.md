@@ -191,7 +191,9 @@ rpm -q gstreamer1-plugin-libav
 
 ### Passo 2: Executar Ação Apropriada
 
-**Se tem `ffmpeg-free` e NÃO tem `ffmpeg`:**
+**⚠️ IMPORTANTE:** Alguns pacotes podem não existir em Fedora 43. Se receber "not found" ao executar o comando, use a **Opção Alternativa** abaixo.
+
+#### Opção Padrão: Se tem `ffmpeg-free` e NÃO tem `ffmpeg`
 
 ```bash
 sudo rpm-ostree override remove \
@@ -200,36 +202,65 @@ sudo rpm-ostree override remove \
   ffmpeg-free \
   --install ffmpeg \
   --install --allow-inactive gstreamer1-plugin-libav \
-  --install --allow-inactive gstreamer1-plugins-bad-free-extras \
-  --install --allow-inactive gstreamer1-plugins-bad-freeworld \
-  --install --allow-inactive gstreamer1-plugins-ugly \
-  --install --allow-inactive mozilla-openh264 \
-  --install --allow-inactive gstreamer1-plugin-openh264
+  --install --allow-inactive mozilla-openh264
 ```
 
-**Se já tem `ffmpeg` mas faltam gstreamer:**
+**Se receber erro "not found" para alguns pacotes gstreamer**, use a **Opção Alternativa (Mínima)** abaixo.
+
+#### Opção Alternativa (Mínima) - Se Opção Padrão Falhar
+
+Se o comando acima falhar com "not found", execute apenas isto:
+
+```bash
+sudo rpm-ostree override remove \
+  libavdevice-free libavcodec-free libavfilter-free libavformat-free \
+  libavutil-free libpostproc-free libswresample-free libswscale-free \
+  ffmpeg-free \
+  --install ffmpeg
+```
+
+**O que faz:**
+- ✅ Remove ffmpeg-free (versão base/livre)
+- ✅ Instala ffmpeg (versão completa RPM Fusion)
+- ✅ Mantém gstreamer1-plugin-libav (se já tem)
+
+---
+
+#### Se já tem `ffmpeg` mas faltam gstreamer
 
 ```bash
 sudo rpm-ostree install --idempotent --allow-inactive \
   gstreamer1-plugin-libav \
-  gstreamer1-plugins-bad-free-extras \
-  gstreamer1-plugins-bad-freeworld \
-  gstreamer1-plugins-ugly \
-  mozilla-openh264 \
-  gstreamer1-plugin-openh264
+  mozilla-openh264
 ```
 
-**Se não tem nenhum:**
+---
+
+#### Se não tem nenhum
 
 ```bash
 sudo rpm-ostree install --idempotent --allow-inactive \
   ffmpeg \
   gstreamer1-plugin-libav \
-  gstreamer1-plugins-bad-free-extras \
-  gstreamer1-plugins-bad-freeworld \
-  gstreamer1-plugins-ugly \
-  mozilla-openh264 \
-  gstreamer1-plugin-openh264
+  mozilla-openh264
+```
+
+---
+
+### Passo 3: Verificar Instalação
+
+```bash
+# Verificar que ffmpeg foi instalado:
+rpm -q ffmpeg
+# Deve retornar: ffmpeg-version
+
+# Verificar que ffmpeg-free foi removido (se era o caso):
+rpm -q ffmpeg-free
+# Deve retornar: package ffmpeg-free is not installed (OK!)
+
+# Verificar gstreamer:
+rpm -q gstreamer1-plugin-libav
+# Deve retornar: gstreamer1-plugin-libav-version
 ```
 
 Aguarde a conclusão (2-3 minutos).
