@@ -570,13 +570,32 @@ EZA_URL="https://github.com/eza-community/eza/releases/download/${EZA_RELEASE}/e
 echo "URL: $EZA_URL"
 ```
 
-### Download e instalação:
+### Download e instalação (CORRIGIDO):
 
 ```bash
-wget -qO- "$EZA_URL" 2>/dev/null | tar xz -C "$HOME/.local/bin" eza 2>/dev/null
+# Opção 1: Com pipe (uma linha - elegante)
+wget -qO- "$EZA_URL" 2>/dev/null | tar xz --strip-components=1 -C "$HOME/.local/bin" 2>/dev/null
 chmod +x "$HOME/.local/bin/eza"
 
-# Verificar:
+# Opção 2: Sem pipe (mais seguro - recomendado)
+cd /tmp
+wget -q "$EZA_URL" -O eza.tar.gz
+tar xz -f eza.tar.gz -C "$HOME/.local/bin"
+chmod +x "$HOME/.local/bin/eza"*
+rm eza.tar.gz
+```
+
+**Qual usar?**
+- ✅ **Opção 1:** Se funcionar direto
+- ✅ **Opção 2:** Se Opção 1 falhar ou preferir mais controle
+
+### Verificar instalação:
+
+```bash
+# Verificar que arquivo existe:
+ls -la "$HOME/.local/bin/eza"
+
+# Verificar versão:
 $HOME/.local/bin/eza --version
 ```
 
